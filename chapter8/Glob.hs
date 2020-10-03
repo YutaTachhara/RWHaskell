@@ -29,3 +29,34 @@ namesMatching pat
                     baseNames <- listDir dir baseName
                     return (map (dir </>) baseName)
                 return (concat pathNames)
+
+doesNameExist :: FilePath -> IO Bool
+
+doesNameExist name = do
+    fileExists <- doesFileExist name
+    if fileExists
+    then return True
+    else doesDirectoryExist name
+
+listMatches :: FilePath -> String -> IO [String]
+listMatches dirName pat = do
+    dirName' <- if null dirName
+                then getCurrentDirectory
+                else return dirName
+    handle (const (return [])) $ do
+        names <- getDirectoryContents dirName'
+        let names' = if isHidden pat
+        then filetr isHidden names
+    return (filter (`matchesGlob` pat) names')
+
+isHidden ('.':_) = True
+isHidden _ = False
+
+listPlain :: FilePath -> String -> IO[String]
+listPlain dirName baseName = do
+    exists <- if null baseName
+              then doesDirectoryExist dirName
+              else doesNameExist (dirName </> baseName)
+    return (if exists then [baseName] else [])
+
+
