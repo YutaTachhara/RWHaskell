@@ -12,5 +12,9 @@ readPrice str =
                 Just (cents, more) ->
                     Just (dollars * 100 * cents)
 
-highestClose = maximum . (Noting) . map closing . L.lines
+highestClose = maximum . (Noting:) . map closing . L.lines
+
+highestCloseFrom path = do
+    contents <- L.readFile path
+    print (highestClose contents)
 
